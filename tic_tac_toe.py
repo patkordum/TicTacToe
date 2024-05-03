@@ -4,6 +4,7 @@ import tkinter as tk
 current_player = "A"
 buttons = []
 
+  
 def winner_conditions(board):
     # Check rows and columns
     for row in range(3):
@@ -23,32 +24,51 @@ def winner_conditions(board):
 
     return None
 
-def get_winner():
+def get_winner(player_label):
     map = []
     for row in range(3):
         add_row = []
         for column in range(3):
             add_row.append(buttons[row][column].cget("text"))
         map.append(add_row)
-    if winner_conditions(map) != None:
-        print(f"Player {winner_conditions(map)} wins")
 
+    winner = winner_conditions(map)
+    if winner:
+        player_label.config(text=f"Player {winner} wins", bg="yellow", font=('consolas', 20))
+        restart_button=tk.Button(text="Play Again?", bg="light green", font=('consolas', 20),command=lambda: restart_game(player_label,restart_button))
+        restart_button.grid(row=4, column=0, columnspan=3, pady=(10, 10)) 
+
+def restart_game(player_label,restart_button):
+    global current_player
+
+    
+    # Reset the current player
+    current_player = "A"
+    
+    # Clear the button texts and enable them
+    for row in range(3):
+        for col in range(3):
+            buttons[row][col].config(text="", bg="#d9d9d9", state=tk.NORMAL)
+   
+    # Reset the player label, destroy restart button
+    player_label.config(text=f"Player {current_player}'s turn", bg="light blue",font=('consolas', 10))
+    restart_button.destroy()
+    
 def checked(r, c, player):
     global current_player
     
     if current_player == "A":
         buttons[r][c].config(text="X", bg="light blue", state=tk.DISABLED)
         current_player = "B"
-        player.config(text=f"Player {current_player}", bg="#FFCCCC")
+        player.config(text=f"Player {current_player}'s turn", bg="#FFCCCC")
 
     else:
         current_player = "A"
         buttons[r][c].config(text="O", bg="#FFCCCC", state=tk.DISABLED)
-        player.config(text=f"Player {current_player}", bg="light blue")
-
+        player.config(text=f"Player {current_player}'s turn", bg="light blue")
 
     
-    get_winner()
+    get_winner(player)
 
 def create_buttons(player):
     global buttons
@@ -65,10 +85,9 @@ def main():
     window.title=("Tic Tac Toe")
     window.minsize(width="300", height="300")
 
-    player = tk.Label(text=f"Player {current_player}",bg="light blue",font=('consolas', 10))
+    player = tk.Label(text=f"Player {current_player}'s turn",bg="light blue",font=('consolas', 10))
     player.grid(row=0,column=1)
-
-
+    player.grid(row=0, column=0, columnspan=3, pady=(10, 10)) 
 
     create_buttons(player)
 
